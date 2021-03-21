@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="temp_report_turnover_by_city">
+        <t t-call="report.external_layout">
+            <div class="page">
+                <div class="oe_structure"/>
+                    <div class="row">
+                    <center>
+                        <b>
+                            <h4>LAPORAN OMSET per KOTA</h4>
+                        </b>
+                    </center>
+                </div>
+                <br/>
+                <t t-foreach="data.keys()" t-as="city">
+                    <t t-if="data[city]">
+                        <center style="margin-bottom: 10px;">
+                            <b>
+                                <span t-esc="city"/>
+                            </b>
+                        </center>
+                    </t>
+                    <t t-set="total_sum" t-value="0"/>
+
+                    <t t-foreach="data[city].keys()" t-as="month">
+                        <div class="row">
+                            <div class="col-xs-6">
+                                <table class="table table-condensed" style="margin-bottom:-2px">
+                                    <thead >
+                                        <tr>
+                                            <th>Bulan: </th>
+                                            <td>
+                                                <span t-esc="month"/>
+                                            </td>
+                                        </tr>
+                                    </thead>
+                                </table>
+                            </div>
+                        </div>
+                        <table class="table table-bordered table-condensed table-striped">
+                            <tbody>
+                                <tr>
+                                    <td><b>No</b></td>
+                                    <td><b>Sales</b></td>
+                                    <td class="text-right"><b>Sisa Tagihan</b></td>
+                                </tr>
+                                <t t-set="number" t-value="1"/>
+                                <t t-set="residual_invoice" t-value="0"/>
+                                <t t-foreach="data[city][month]" t-as="sales">
+                                    <tr>
+                                        <td>
+                                            <span t-esc="number"/>
+                                            <t t-set="number" t-value="number + 1"/>
+                                        </td>
+                                        <td>
+                                            <span t-esc="sales"/>
+                                        </td>
+                                        <td class="text-right">
+                                            <span t-esc="'{:,}'.format(data[city][month][sales])"/>
+                                            <t t-set="residual_invoice" t-value="residual_invoice + data[city][month][sales]"/>
+                                        </td>
+                                    </tr>
+                                </t>
+                                <tr>
+                                    <td colspan="3" class="text-right">
+                                        <span t-esc="'{:,}'.format(residual_invoice)"/>
+                                        <t t-set="total_sum" t-value="total_sum + residual_invoice"/>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </t>
+
+                    <t t-if="total_sum > 0">
+                        <div class="row">
+                            <div class="col-xs-4 pull-right">
+                                <table class="table table-condensed">
+                                    <tr>
+                                        <td><strong>Total</strong></td>
+                                        <td class="text-right">
+                                            <span t-esc="'{:,}'.format(total_sum)"/>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </t>
+                </t>
+            </div>
+        </t>
+    </template>
+</odoo>

@@ -8,8 +8,8 @@
     'depends': ['base', 'account', 'vit_kelurahan'],
     'data': [
         'views/account_view.xml',
-        'report/city_report.xml',
-        'report/city_temp.xml'
+        'report/report_turnover_by_city.xml',
+        'report/temp_report_turnover_by_city.xml'
     ],
     'images': ['static/description/banner.png'],
     'auto_install': False,

@@ -1,20 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <template id="city_temp">
+    <template id="temp_report_turnover_by_city">
         <t t-call="report.external_layout">
             <div class="page">
                 <div class="oe_structure"/>
                     <div class="row">
                     <center>
                         <b>
-                            <h4>Piutang dan Kredit Limit per Kota</h4>
-                        </b>
-                    </center>
-                    <center>
-                        <b>
-                            <span t-esc="start_date"/>
-                            To
-                            <span t-esc="end_date"/>
+                            <h4>Laporan Omzet per Kota</h4>
                         </b>
                     </center>
                 </div>
@@ -28,56 +21,10 @@
                         </center>
                     </t>
                     <t t-set="total_sum" t-value="0"/>
-                    <t t-set="current_partner" t-value="a"/>
                     <t t-set="amount_total_invoice" t-value="0"/>
 
                     <t t-foreach="data[city]" t-as="invoices">
-                        <t t-if="invoices[2] == []">
-                            <t t-if="invoices[4] == 1">
-                                <div class="row">
-                                    <div class="col-xs-6">
-                                        <table class="table table-condensed table-striped">
-                                            <thead >
-                                                <tr>
-                                                    <th>Pelanggan: </th>
-                                                    <td class="text-right">
-                                                        <span t-esc="invoices[0]"/>
-                                                    </td>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr>
-                                                    <td><strong>Tagihan: </strong></td>
-                                                    <td class="text-right">
-                                                        <span t-esc="invoices[5]"/>
-                                                    </td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                    <div class="col-xs-6">
-                                        <table class="table table-condensed table-striped">
-                                            <thead>
-                                                <tr>
-                                                    <td><strong>Kredit Limit: </strong></td>
-                                                    <td class="text-right">
-                                                        <span t-esc="'{:,}'.format(invoices[1])"/>
-                                                    </td>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr>
-                                                    <td><strong>Sisa Kredit Limit: </strong></td>
-                                                    <td class="text-right">
-                                                        <span t-esc="'{:,}'.format(invoices[1]-invoices[5])"/>
-                                                    </td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            </t>
-                        </t>
+                        <t t-if="invoices[2] == []"></t>
                         <t t-else="">
                             <div class="row">
                                 <div class="col-xs-6">
@@ -134,8 +81,6 @@
                                                 <t t-set="residual_invoice" t-value="residual_invoice + invoice[5]"/>
                                                 <t t-set="total_sum" t-value="total_sum + invoice[5]"/>
                                             </td>
-                                            <td></td>
-                                            <td style="width: 40px"></td>
                                         </tr>
                                     </t>
                                     <tr>
@@ -150,24 +95,6 @@
                                     </tr>
                                 </tbody>
                             </table>
-                            <div class="row">
-                                <div class="col-xs-6">
-                                    <table class="table table-condensed table-striped" style="margin-top:-15px; margin-bottom: 30px;">
-                                        <tr>
-                                            <td><strong>Kredit Limit: </strong></td>
-                                            <td class="text-right">
-                                                <span t-esc="'{:,}'.format(invoices[1])"/>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td><strong>Sisa Kredit Limit: </strong></td>
-                                            <td class="text-right">
-                                                <span t-esc="'{:,}'.format(invoices[1]-invoices[3])"/>
-                                            </td>
-                                        </tr>
-                                    </table>
-                                </div>
-                            </div>
                         </t>
                     </t>
 

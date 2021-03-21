@@ -16,6 +16,7 @@ class AccountReportByCity(models.TransientModel):
     
     @api.multi
     def print_report_turnover_by_city(self):
+        months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember']
         groupby_dict = {}
         today = date.today()
         check_date = datetime.combine(today, datetime.min.time())
@@ -25,49 +26,46 @@ class AccountReportByCity(models.TransientModel):
             self.city_ids = self.env['vit.kota'].search([])
 
         for city in self.city_ids:
-            partners = self.env['res.partner'].search([('kota_id.name', '=', city.name)])
-                        
-            partner_detail = []
-            for partner in partners:
+            salespersons = self.env['res.users'].search([])
+
+            for salesperson in salespersons:
                 invoices = self.env['account.invoice'].search([ 
                     ('state', '=', 'open'), 
                     ('type', '=', 'out_invoice'), 
-                    ('partner_id.name', '=', partner.display_name),
+                    ('user_id.name', '=', salesperson.name),
                     ('date_due', '<=', today) 
                 ],
                 order="date_invoice asc")
 
-                
-                partner_temp = []
-                partner_invoices = []
-                partner_temp.append(partner.display_name) #0
-                partner_temp.append(partner.credit_limit) #1
                 for invoice in invoices:
                     due_date = datetime.strptime(invoice.date_invoice, '%Y-%m-%d') + timedelta(days=over_due)
                     if due_date > check_date:
                         continue
 
-                    partner_invoice = []
-                    partner_invoice.append(invoice.date_invoice) #0
-                    partner_invoice.append(invoice.number) #1
-                    partner_invoice.append(invoice.date_due) #2
-                    partner_invoice.append(invoice.origin) #3
-                    partner_invoice.append(invoice.amount_total_signed ) #4
-                    partner_invoice.append(invoice.residual_signed ) #5
-                    partner_invoice.append(invoice.user_id.name) #6
-                    partner_invoices.append(partner_invoice)
+                    month = months[datetime.strptime(invoice.date_invoice, '%Y-%m-%d').month-1]
 
-                partner_temp.append(partner_invoices)
-                partner_temp.append(partner.risk_total) #3
-                
-                partner_temp.append(partner.risk_invoice_open) #5
-                if len(partner_invoices) < 1:
-                    continue
-                partner_detail.append(partner_temp) #2
+                    if city.name not in groupby_dict:
+                        groupby_dict[city.name] = {
+                            'Januari': {},
+                            'Februari': {},
+                            'Maret': {},
+                            'April': {},
+                            'Mei': {},
+                            'Juni': {},
+                            'Juli': {},
+                            'Agustus': {},
+                            'September': {},
+                            'Oktober': {},
+                            'November': {},
+                            'Desember': {}
+                        }
 
-            if len(partner_detail) < 1:
-                continue
-            groupby_dict[city.name] = partner_detail
+                    curr_dist = groupby_dict[city.name][month]
+
+                    if salesperson.name not in curr_dist:
+                        curr_dist[salesperson.name] = invoice.residual_signed
+                    else:
+                        curr_dist[salesperson.name] = curr_dist[salesperson.name] + invoice.residual_signed
 
         datas = {
             'ids': self.ids,
